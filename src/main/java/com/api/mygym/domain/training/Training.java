@@ -1,5 +1,6 @@
 package com.api.mygym.domain.training;
 
+import com.api.mygym.domain.training.dto.CreateTrainingRequest;
 import com.api.mygym.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,4 +37,11 @@ public class Training {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public Training(CreateTrainingRequest data, User user){
+        this.name = data.name();
+        this.weekDay = getWeekDay();
+        this.user = user;
+    }
+
 }
