@@ -1,0 +1,9 @@
+CREATE TYPE WEEK_DAYS AS ENUM (
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+    'SUNDAY'
+);
