@@ -8,6 +8,7 @@ import com.api.mygym.infra.exception.TrainingAlreadyExistsForDayException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,5 +35,14 @@ public class TrainingService {
                 .orElseThrow(() -> new NotFoundException("Treino não encontrado com esse id"));
 
         repository.delete(training);
+    }
+
+    public List<TrainingResponse> getAllByUser(User user){
+
+        var trainings = repository.findAllByUserId(user.getId());
+
+        return trainings.stream()
+                .map(TrainingResponse::new)
+                .toList();
     }
 }
