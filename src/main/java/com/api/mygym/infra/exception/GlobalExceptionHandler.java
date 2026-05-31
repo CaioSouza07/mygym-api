@@ -19,6 +19,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException e){
+        var response = new ErrorResponse(e.getMessage(), HttpStatus.CONFLICT.value(), null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(TrainingAlreadyExistsForDayException.class)
+    public ResponseEntity<ErrorResponse> handleTrainingAlreadyExists(TrainingAlreadyExistsForDayException e){
+        var response = new ErrorResponse(e.getMessage(), HttpStatus.CONFLICT.value(), null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(TokenJwtException.class)
+    public ResponseEntity<ErrorResponse> handleTokenJwtException(TokenJwtException e){
+        var response = new ErrorResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<ErrorResponse> handleSecurityException(SecurityException e){
+        var response = new ErrorResponse(e.getMessage(), HttpStatus.FORBIDDEN.value(), null);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationBadRequestException(MethodArgumentNotValidException e){
         var errors = e.getFieldErrors();
