@@ -40,7 +40,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody @Valid CreateUserRequest request){
-
+        System.out.println("ENTROU NO REGISTER");
         if (userRepository.findByEmail(request.email()) != null){
             throw new UserAlreadyExistsException("Usuário já cadastrado");
         }
