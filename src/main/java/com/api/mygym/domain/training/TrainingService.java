@@ -63,4 +63,11 @@ public class TrainingService {
                 .map(TrainingResponse::new)
                 .toList();
     }
+
+    public TrainingResponse getById(UUID id){
+        var training = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Treino não encontrado com esse id"));
+
+        return new TrainingResponse(training);
+    }
 }
