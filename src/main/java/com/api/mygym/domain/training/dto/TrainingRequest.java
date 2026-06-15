@@ -6,9 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
-import java.util.UUID;
 
-public record CreateTrainingRequest(
+public record TrainingRequest(
 
         @NotBlank
         String name,

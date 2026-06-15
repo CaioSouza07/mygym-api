@@ -1,7 +1,7 @@
 package com.api.mygym.domain.training;
 
 import com.api.mygym.domain.exercise.Exercise;
-import com.api.mygym.domain.training.dto.CreateTrainingRequest;
+import com.api.mygym.domain.training.dto.TrainingRequest;
 import com.api.mygym.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,7 +43,7 @@ public class Training {
     @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercise> exercises;
 
-    public Training(CreateTrainingRequest data, User user){
+    public Training(TrainingRequest data, User user){
         this.name = data.name();
         this.weekDay = data.weekDay();
         this.user = user;
