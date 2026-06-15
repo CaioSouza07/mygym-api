@@ -22,14 +22,14 @@ public class Exercise {
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String name;
 
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Serie> series;
 
     @ManyToOne
-    @JoinColumn(name = "id_training", nullable = false)
+    @JoinColumn(name = "training_id", nullable = false)
     private Training training;
 
 }

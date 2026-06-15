@@ -23,10 +23,10 @@ public class Serie {
     @Column(nullable = false)
     private int repetitions;
 
-    @Column(nullable = false)
+    @Column(name = "order_index", nullable = false)
     private int order;
 
     @ManyToOne
-    @JoinColumn(name = "id_exercise", nullable = false)
+    @JoinColumn(name = "exercise_id", nullable = false)
     private Exercise exercise;
 }
