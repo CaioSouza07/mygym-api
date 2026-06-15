@@ -6,6 +6,7 @@ import com.api.mygym.domain.user.User;
 import com.api.mygym.infra.exception.NotFoundException;
 import com.api.mygym.infra.exception.TrainingAlreadyExistsForDayException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,16 +42,24 @@ public class TrainingService {
             throw new TrainingAlreadyExistsForDayException("Esse dia da semana já possuí um treino para esse usuário");
         }
 
+        if (!repository.existsByIdAndUserId(trainingId, user.getId())){
+            throw new AccessDeniedException("Treino só pode ser atualizado pelo usuário responsável");
+        }
+
         mapper.updateEntity(training, request);
 
         return new TrainingResponse(training);
     }
 
     @Transactional
-    public void remove(UUID id){
+    public void remove(UUID id, User user){
 
         var training = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Treino não encontrado com esse id"));
+
+        if (!repository.existsByIdAndUserId(id, user.getId())){
+            throw new AccessDeniedException("Treino só pode ser excluído pelo usuário responsável");
+        }
 
         repository.delete(training);
     }

@@ -11,4 +11,5 @@ public interface TrainingRepository extends JpaRepository<Training, UUID> {
     boolean existsByUserIdAndWeekDay(UUID userId, WeekDay weekDay);
     List<Training> findAllByUserId(UUID id);
     boolean existsByUserIdAndWeekDayAndIdNot(UUID id, WeekDay weekDay, UUID trainingId);
+    boolean existsByIdAndUserId(UUID id, UUID userId);
 }
