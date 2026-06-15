@@ -16,14 +16,14 @@ import java.util.UUID;
 public class TrainingService {
 
     private final TrainingRepository repository;
+    private final TrainingMapper trainingMapper;
 
     public TrainingResponse add(CreateTrainingRequest request, User user){
 
         if (repository.existsByUserIdAndWeekDay(user.getId(), request.weekDay())){
             throw new TrainingAlreadyExistsForDayException("Esse dia da semana já possuí um treino para esse usuário");
         }
-
-        var training = new Training(request, user);
+        var training = trainingMapper.toEntity(request, user);
         repository.save(training);
 
         return new TrainingResponse(training);
