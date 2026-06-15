@@ -7,6 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TrainingRepository extends JpaRepository<Training, UUID> {
-    boolean existsByUserIdAndWeekDay(UUID id, WeekDay weekDay);
+    boolean existsByUserIdAndWeekDay(UUID userId, WeekDay weekDay);
     List<Training> findAllByUserId(UUID id);
 }
