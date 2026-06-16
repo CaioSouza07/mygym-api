@@ -47,7 +47,7 @@ public class TrainingService {
         }
 
         mapper.updateEntity(training, request);
-
+        repository.flush();
         return new TrainingResponse(training);
     }
 

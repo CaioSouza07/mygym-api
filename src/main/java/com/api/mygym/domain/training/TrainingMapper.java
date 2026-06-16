@@ -30,7 +30,7 @@ public class TrainingMapper {
         training.getExercises().clear();
 
         var exercises = createExercises(data.exercises(), training);
-        training.setExercises(exercises);
+        training.getExercises().addAll(exercises);
     }
 
         private List<Exercise> createExercises(List<ExerciseRequest> exercises, Training training) {

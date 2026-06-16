@@ -4,10 +4,14 @@ import com.api.mygym.infra.exception.dto.ErrorResponse;
 import com.api.mygym.infra.exception.dto.ErrorValidationResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -35,6 +39,28 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTokenJwtException(TokenJwtException e){
         var response = new ErrorResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), null);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+        var message = e.getMessage();
+        if (e.getRequiredType() == UUID.class){
+            message = "UUID inválido";
+        }
+        var response = new ErrorResponse(message, HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e){
+        var response = new ErrorResponse(e.getMessage(), HttpStatus.FORBIDDEN.value(), null);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
+        var response = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(SecurityException.class)
