@@ -1,0 +1,2 @@
+ALTER TABLE trainings
+ALTER COLUMN week_day TYPE VARCHAR;
