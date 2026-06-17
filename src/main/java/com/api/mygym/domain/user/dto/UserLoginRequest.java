@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 
 public record UserLoginRequest(
 
-        @NotBlank
-        @Email
+        @NotBlank(message = "Não pode ser vazio")
+        @Email(message = "Formato de e-mail inválido")
         String email,
 
-        @NotBlank
+        @NotBlank(message = "Não pode ser vazio")
         String password
 ) {
 }
