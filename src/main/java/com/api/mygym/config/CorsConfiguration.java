@@ -10,8 +10,8 @@ public class CorsConfiguration implements WebMvcConfigurer {
     // A aplicação frontend só poderá consumir minha api vindo dessa url e porta e utilizar esses métodos
     @Override
     public void addCorsMappings(CorsRegistry registry){
-        registry.addMapping("*//")
-                .allowedOrigins("http://localhost:3000")
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
     }
 

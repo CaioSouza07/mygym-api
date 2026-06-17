@@ -25,7 +25,9 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
         try {
-            return http.csrf(AbstractHttpConfigurer::disable)
+            return http
+                    .cors(cors -> {})
+                    .csrf(AbstractHttpConfigurer::disable)
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();

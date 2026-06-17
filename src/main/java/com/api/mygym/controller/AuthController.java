@@ -4,7 +4,7 @@ import com.api.mygym.domain.user.UserService;
 import com.api.mygym.domain.user.dto.CreateUserRequest;
 import com.api.mygym.domain.user.dto.UserLoginRequest;
 import com.api.mygym.domain.user.dto.UserResponse;
-import com.api.mygym.infra.security.TokenResponse;
+import com.api.mygym.infra.security.AuthResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +21,14 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody @Valid UserLoginRequest request){
-        var token = userService.login(request);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid UserLoginRequest request){
+        var auth = userService.login(request);
+        return ResponseEntity.ok(auth);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody @Valid CreateUserRequest request){
-        var user = userService.register(request);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid CreateUserRequest request){
+        var auth = userService.register(request);
+        return ResponseEntity.ok(auth);
     }
 }

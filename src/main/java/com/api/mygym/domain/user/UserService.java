@@ -5,7 +5,7 @@ import com.api.mygym.domain.user.dto.UserLoginRequest;
 import com.api.mygym.domain.user.dto.UserResponse;
 import com.api.mygym.infra.email.EmailService;
 import com.api.mygym.infra.exception.UserAlreadyExistsException;
-import com.api.mygym.infra.security.TokenResponse;
+import com.api.mygym.infra.security.AuthResponse;
 import com.api.mygym.infra.security.TokenService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
 
     @Transactional
-    public UserResponse register(CreateUserRequest data){
+    public AuthResponse register(CreateUserRequest data){
         if (userRepository.findByEmail(data.email()) != null){
             throw new UserAlreadyExistsException("Usuário já cadastrado");
         }
@@ -41,14 +41,18 @@ public class UserService {
             System.err.println("Erro ao enviar o email: " + e.getMessage());
         }
 
-        return new UserResponse(user);
-    }
-
-    public TokenResponse login(UserLoginRequest data){
         var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var authentication = authenticationManager.authenticate(authenticationToken);
 
         var tokenJwt = tokenService.generateToken((User) authentication.getPrincipal());
-        return new TokenResponse(tokenJwt);
+        return new AuthResponse(tokenJwt, new UserResponse(user));
+    }
+
+    public AuthResponse login(UserLoginRequest data){
+        var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        var authentication = authenticationManager.authenticate(authenticationToken);
+
+        var tokenJwt = tokenService.generateToken((User) authentication.getPrincipal());
+        return new AuthResponse(tokenJwt, new UserResponse((User) authentication.getPrincipal()));
     }
 }
