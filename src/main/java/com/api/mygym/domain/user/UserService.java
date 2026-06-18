@@ -1,13 +1,16 @@
 package com.api.mygym.domain.user;
 
+import com.api.mygym.domain.refresh_token.RefreshTokenService;
 import com.api.mygym.domain.user.dto.CreateUserRequest;
 import com.api.mygym.domain.user.dto.UserLoginRequest;
 import com.api.mygym.domain.user.dto.UserResponse;
 import com.api.mygym.infra.email.EmailService;
 import com.api.mygym.infra.exception.UserAlreadyExistsException;
 import com.api.mygym.infra.security.AuthResponse;
+import com.api.mygym.infra.security.CookieUtils;
 import com.api.mygym.infra.security.TokenService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,9 +26,10 @@ public class UserService {
     private final EmailService emailService;
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
-    public AuthResponse register(CreateUserRequest data){
+    public AuthResponse register(CreateUserRequest data, HttpServletResponse response){
         if (userRepository.findByEmail(data.email()) != null){
             throw new UserAlreadyExistsException("Usuário já cadastrado");
         }
@@ -45,14 +49,19 @@ public class UserService {
         var authentication = authenticationManager.authenticate(authenticationToken);
 
         var tokenJwt = tokenService.generateToken((User) authentication.getPrincipal());
+        var refreshToken = refreshTokenService.create((User) authentication.getPrincipal());
+        response.addCookie(CookieUtils.createRefreshToken(refreshToken.getToken()));
         return new AuthResponse(tokenJwt, new UserResponse(user));
     }
 
-    public AuthResponse login(UserLoginRequest data){
+    public AuthResponse login(UserLoginRequest data, HttpServletResponse response){
         var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var authentication = authenticationManager.authenticate(authenticationToken);
 
         var tokenJwt = tokenService.generateToken((User) authentication.getPrincipal());
+
+        var refreshToken = refreshTokenService.create((User) authentication.getPrincipal());
+        response.addCookie(CookieUtils.createRefreshToken(refreshToken.getToken()));
         return new AuthResponse(tokenJwt, new UserResponse((User) authentication.getPrincipal()));
     }
 }
