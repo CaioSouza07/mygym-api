@@ -2,9 +2,11 @@ package com.api.mygym.controller;
 
 import com.api.mygym.domain.refresh_token.RefreshTokenService;
 import com.api.mygym.domain.refresh_token.dto.RefreshTokenResponse;
+import com.api.mygym.domain.user.User;
 import com.api.mygym.domain.user.UserService;
 import com.api.mygym.domain.user.dto.CreateUserRequest;
 import com.api.mygym.domain.user.dto.UserLoginRequest;
+import com.api.mygym.domain.user.dto.UserResponse;
 import com.api.mygym.infra.security.AuthResponse;
 import com.api.mygym.infra.security.CookieUtils;
 import jakarta.servlet.http.Cookie;
@@ -14,10 +16,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -62,6 +62,11 @@ public class AuthController {
         response.addCookie(CookieUtils.deleteRefreshToken());
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(new UserResponse(user));
     }
 
     private String getRefreshToken(HttpServletRequest request) {
