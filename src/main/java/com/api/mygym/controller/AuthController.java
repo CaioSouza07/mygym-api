@@ -64,11 +64,6 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user){
-        return ResponseEntity.ok(new UserResponse(user));
-    }
-
     private String getRefreshToken(HttpServletRequest request) {
 
         if (request.getCookies() == null) {

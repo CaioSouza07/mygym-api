@@ -59,7 +59,6 @@ public class SecurityConfiguration {
 
 
             String message;
-
             if (authException.getClass().equals(InternalAuthenticationServiceException.class)) {
                 message = "E-mail ou senha inválidos";
             } else if (authException.getClass().equals(InsufficientAuthenticationException.class)) {
@@ -71,6 +70,8 @@ public class SecurityConfiguration {
             response.getWriter().write("""
             {"message": "%s"}
         """.formatted(message));
+            throw authException;
+
         };
     }
 
