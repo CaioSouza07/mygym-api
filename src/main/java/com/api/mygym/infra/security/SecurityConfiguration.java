@@ -51,27 +51,14 @@ public class SecurityConfiguration {
 
 
     @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint(){
+    public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            response.setCharacterEncoding("UTF-8");
-
-
-            String message;
-            if (authException.getClass().equals(InternalAuthenticationServiceException.class)) {
-                message = "E-mail ou senha inválidos";
-            } else if (authException.getClass().equals(InsufficientAuthenticationException.class)) {
-                message = "Token não fornecido";
-            } else {
-                message = "Não autenticado";
-            }
 
             response.getWriter().write("""
-            {"message": "%s"}
-        """.formatted(message));
-            throw authException;
-
+        {"message": "Token não fornecido ou inválido"}
+        """);
         };
     }
 

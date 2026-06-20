@@ -13,6 +13,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,13 +56,23 @@ public class UserService {
     }
 
     public AuthResponse login(UserLoginRequest data, HttpServletResponse response){
-        var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        var authentication = authenticationManager.authenticate(authenticationToken);
+        try {
+            var authenticationToken =
+                    new UsernamePasswordAuthenticationToken(data.email(), data.password());
 
-        var tokenJwt = tokenService.generateToken((User) authentication.getPrincipal());
+            var authentication = authenticationManager.authenticate(authenticationToken);
 
-        var refreshToken = refreshTokenService.create((User) authentication.getPrincipal());
-        response.addCookie(CookieUtils.createRefreshToken(refreshToken.getToken()));
-        return new AuthResponse(tokenJwt, new UserResponse((User) authentication.getPrincipal()));
+            var user = (User) authentication.getPrincipal();
+
+            var tokenJwt = tokenService.generateToken(user);
+
+            var refreshToken = refreshTokenService.create(user);
+            response.addCookie(CookieUtils.createRefreshToken(refreshToken.getToken()));
+
+            return new AuthResponse(tokenJwt, new UserResponse(user));
+
+        } catch (Exception e) {
+            throw new BadCredentialsException("E-mail ou senha incorretos");
+        }
     }
 }
