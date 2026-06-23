@@ -84,4 +84,10 @@ public class GlobalExceptionHandler {
         var response = new ErrorResponse("E-mail ou senha incorretos", HttpStatus.UNAUTHORIZED.value(), null);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e){
+        var response = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), null);
+        return ResponseEntity.badRequest().body(response);
+    }
 }

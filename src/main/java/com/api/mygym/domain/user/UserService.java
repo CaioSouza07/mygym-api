@@ -77,17 +77,21 @@ public class UserService {
     }
 
     @Transactional
+
     public UserResponse updateUser(UpdateUserRequest data, User user){
-        user.setName(data.name());
-        return new UserResponse(user);
+        var managedUser = userRepository.findById(user.getId())
+                .orElseThrow();
+        managedUser.setName(data.name());
+        return new UserResponse(managedUser);
     }
+
 
     @Transactional
     public void changePassword(ChangePasswordRequest data, User user, HttpServletResponse response) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         if (!encoder.matches(data.currentPassword(), user.getPassword())){
-            throw new BadCredentialsException("Senha atual incorreta");
+            throw new BadRequestException("Senha atual incorreta");
         }
 
         if (encoder.matches(data.newPassword(), user.getPassword())) {
