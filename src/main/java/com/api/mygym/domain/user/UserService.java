@@ -2,6 +2,8 @@ package com.api.mygym.domain.user;
 
 import com.api.mygym.domain.refresh_token.RefreshTokenService;
 import com.api.mygym.domain.user.dto.*;
+import com.api.mygym.domain.user.preferences.Preferences;
+import com.api.mygym.domain.user.preferences.PreferencesRepository;
 import com.api.mygym.infra.email.EmailService;
 import com.api.mygym.infra.exception.BadRequestException;
 import com.api.mygym.infra.exception.UserAlreadyExistsException;
@@ -12,6 +14,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +31,7 @@ public class UserService {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+    private final PreferencesRepository preferencesRepository;
 
     @Transactional
     public AuthResponse register(CreateUserRequest data, HttpServletResponse response){
@@ -52,6 +56,9 @@ public class UserService {
         var tokenJwt = tokenService.generateToken((User) authentication.getPrincipal());
         var refreshToken = refreshTokenService.create((User) authentication.getPrincipal());
         response.addCookie(CookieUtils.createRefreshToken(refreshToken.getToken()));
+
+        addPreferences(user);
+
         return new AuthResponse(tokenJwt, new UserResponse(user));
     }
 
@@ -77,7 +84,6 @@ public class UserService {
     }
 
     @Transactional
-
     public UserResponse updateUser(UpdateUserRequest data, User user){
         var managedUser = userRepository.findById(user.getId())
                 .orElseThrow();
@@ -107,4 +113,13 @@ public class UserService {
         var newRefreshToken = refreshTokenService.create(user);
         response.addCookie(CookieUtils.createRefreshToken(newRefreshToken.getToken()));
     }
+
+    @Async
+    @Transactional
+    private void addPreferences(User user){
+        var preference = new Preferences(user);
+        preferencesRepository.save(preference);
+    }
+
+
 }
