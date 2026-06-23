@@ -1,16 +1,16 @@
 package com.api.mygym.domain.user;
 
 import com.api.mygym.domain.refresh_token.RefreshTokenService;
-import com.api.mygym.domain.user.dto.CreateUserRequest;
-import com.api.mygym.domain.user.dto.UserLoginRequest;
-import com.api.mygym.domain.user.dto.UserResponse;
+import com.api.mygym.domain.user.dto.*;
 import com.api.mygym.infra.email.EmailService;
+import com.api.mygym.infra.exception.BadRequestException;
 import com.api.mygym.infra.exception.UserAlreadyExistsException;
 import com.api.mygym.infra.security.AuthResponse;
 import com.api.mygym.infra.security.CookieUtils;
 import com.api.mygym.infra.security.TokenService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -74,5 +74,33 @@ public class UserService {
         } catch (Exception e) {
             throw new BadCredentialsException("E-mail ou senha incorretos");
         }
+    }
+
+    @Transactional
+    public UserResponse updateUser(UpdateUserRequest data, User user){
+        user.setName(data.name());
+        return new UserResponse(user);
+    }
+
+    @Transactional
+    public void changePassword(ChangePasswordRequest data, User user, HttpServletResponse response) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if (!encoder.matches(data.currentPassword(), user.getPassword())){
+            throw new BadCredentialsException("Senha atual incorreta");
+        }
+
+        if (encoder.matches(data.newPassword(), user.getPassword())) {
+            throw new BadRequestException("Nova senha não pode ser igual à atual");
+        }
+
+        var newEncryptedPassword = encoder.encode(data.newPassword());
+
+        user.setPassword(newEncryptedPassword);
+
+        refreshTokenService.revokeAll(user);
+
+        var newRefreshToken = refreshTokenService.create(user);
+        response.addCookie(CookieUtils.createRefreshToken(newRefreshToken.getToken()));
     }
 }
