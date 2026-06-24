@@ -5,6 +5,7 @@ import com.api.mygym.domain.user.UserService;
 import com.api.mygym.domain.user.dto.ChangePasswordRequest;
 import com.api.mygym.domain.user.dto.UpdateUserRequest;
 import com.api.mygym.domain.user.dto.UserResponse;
+import com.api.mygym.domain.user.preferences.dto.PreferencesDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +43,15 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/me/preferences")
+    public ResponseEntity<PreferencesDTO> getPreferences(@AuthenticationPrincipal User user){
+        var response = userService.getPreferences(user);
+        return ResponseEntity.ok(response);
+    }
 
+    @PutMapping("/me/preferences")
+    public ResponseEntity<PreferencesDTO> getPreferences(@AuthenticationPrincipal User user, @RequestBody @Valid PreferencesDTO request){
+        var response = userService.changePreferences(request, user);
+        return ResponseEntity.ok(response);
+    }
 }

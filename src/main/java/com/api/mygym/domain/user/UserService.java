@@ -4,6 +4,8 @@ import com.api.mygym.domain.refresh_token.RefreshTokenService;
 import com.api.mygym.domain.user.dto.*;
 import com.api.mygym.domain.user.preferences.Preferences;
 import com.api.mygym.domain.user.preferences.PreferencesRepository;
+import com.api.mygym.domain.user.preferences.PreferencesService;
+import com.api.mygym.domain.user.preferences.dto.PreferencesDTO;
 import com.api.mygym.infra.email.EmailService;
 import com.api.mygym.infra.exception.BadRequestException;
 import com.api.mygym.infra.exception.UserAlreadyExistsException;
@@ -31,7 +33,7 @@ public class UserService {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
-    private final PreferencesRepository preferencesRepository;
+    private final PreferencesService preferencesService;
 
     @Transactional
     public AuthResponse register(CreateUserRequest data, HttpServletResponse response){
@@ -57,10 +59,11 @@ public class UserService {
         var refreshToken = refreshTokenService.create((User) authentication.getPrincipal());
         response.addCookie(CookieUtils.createRefreshToken(refreshToken.getToken()));
 
-        addPreferences(user);
+        preferencesService.addPreferences(user);
 
         return new AuthResponse(tokenJwt, new UserResponse(user));
     }
+
 
     public AuthResponse login(UserLoginRequest data, HttpServletResponse response){
         try {
@@ -91,6 +94,15 @@ public class UserService {
         return new UserResponse(managedUser);
     }
 
+    @Transactional
+    public PreferencesDTO changePreferences(PreferencesDTO data, User user){
+        var preferences = preferencesService.updatePreferences(user, data.defaultRestTime());
+        return new PreferencesDTO(preferences);
+    }
+
+    public PreferencesDTO getPreferences(User user){
+        return new PreferencesDTO(preferencesService.getPreferences(user));
+    }
 
     @Transactional
     public void changePassword(ChangePasswordRequest data, User user, HttpServletResponse response) {
@@ -114,12 +126,6 @@ public class UserService {
         response.addCookie(CookieUtils.createRefreshToken(newRefreshToken.getToken()));
     }
 
-    @Async
-    @Transactional
-    private void addPreferences(User user){
-        var preference = new Preferences(user);
-        preferencesRepository.save(preference);
-    }
 
 
 }
