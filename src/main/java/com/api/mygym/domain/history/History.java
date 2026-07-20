@@ -32,7 +32,7 @@ public class History {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, precision = 3, scale = 2)
+    @Column(nullable = false, precision = 6, scale = 2)
     private BigDecimal weight;
 
     @ManyToOne
