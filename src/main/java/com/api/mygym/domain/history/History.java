@@ -1,7 +1,6 @@
-package com.api.mygym.domain.traininghistory;
+package com.api.mygym.domain.history;
 
 import com.api.mygym.domain.exercise.Exercise;
-import com.api.mygym.domain.traininghistory.dto.TrainingHistoryRequest;
 import com.api.mygym.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +18,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class TrainingHistory {
+public class History {
 
     @Id
     @GeneratedValue
@@ -40,4 +39,10 @@ public class TrainingHistory {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public History(Exercise exercise, BigDecimal weight, User user) {
+        this.exercise = exercise;
+        this.createdAt = LocalDateTime.now();
+        this.weight = weight;
+        this.user = user;
+    }
 }
