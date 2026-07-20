@@ -1,4 +1,4 @@
-package com.api.mygym.domain.refresh_token.dto;
+package com.api.mygym.domain.refreshtoken.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

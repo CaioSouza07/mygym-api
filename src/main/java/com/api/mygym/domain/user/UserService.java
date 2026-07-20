@@ -1,9 +1,7 @@
 package com.api.mygym.domain.user;
 
-import com.api.mygym.domain.refresh_token.RefreshTokenService;
+import com.api.mygym.domain.refreshtoken.RefreshTokenService;
 import com.api.mygym.domain.user.dto.*;
-import com.api.mygym.domain.user.preferences.Preferences;
-import com.api.mygym.domain.user.preferences.PreferencesRepository;
 import com.api.mygym.domain.user.preferences.PreferencesService;
 import com.api.mygym.domain.user.preferences.dto.PreferencesDTO;
 import com.api.mygym.infra.email.EmailService;
@@ -14,9 +12,7 @@ import com.api.mygym.infra.security.CookieUtils;
 import com.api.mygym.infra.security.TokenService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

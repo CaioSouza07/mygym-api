@@ -1,4 +1,4 @@
-package com.api.mygym.domain.refresh_token;
+package com.api.mygym.domain.refreshtoken;
 
 import com.api.mygym.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package com.api.mygym.domain.refresh_token;
+package com.api.mygym.domain.refreshtoken;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

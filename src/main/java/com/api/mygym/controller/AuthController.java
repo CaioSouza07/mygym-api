@@ -1,12 +1,10 @@
 package com.api.mygym.controller;
 
-import com.api.mygym.domain.refresh_token.RefreshTokenService;
-import com.api.mygym.domain.refresh_token.dto.RefreshTokenResponse;
-import com.api.mygym.domain.user.User;
+import com.api.mygym.domain.refreshtoken.RefreshTokenService;
+import com.api.mygym.domain.refreshtoken.dto.RefreshTokenResponse;
 import com.api.mygym.domain.user.UserService;
 import com.api.mygym.domain.user.dto.CreateUserRequest;
 import com.api.mygym.domain.user.dto.UserLoginRequest;
-import com.api.mygym.domain.user.dto.UserResponse;
 import com.api.mygym.infra.security.AuthResponse;
 import com.api.mygym.infra.security.CookieUtils;
 import jakarta.servlet.http.Cookie;
@@ -16,7 +14,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
