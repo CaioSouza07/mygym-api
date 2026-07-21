@@ -23,13 +23,10 @@ public class HistoryController {
     @PostMapping
     public ResponseEntity<Void> save(
             @RequestBody @Valid HistoryRequest requestBody,
-            @AuthenticationPrincipal User user,
-            UriComponentsBuilder uriBuilder
+            @AuthenticationPrincipal User user
     ){
-        var uri = uriBuilder.path("/history").buildAndExpand().toUri();
-
         historyService.save(requestBody, user);
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
