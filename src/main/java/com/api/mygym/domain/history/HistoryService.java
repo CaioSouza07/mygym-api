@@ -8,11 +8,14 @@ import com.api.mygym.domain.history.dto.HistoryResponse;
 import com.api.mygym.domain.user.User;
 import com.api.mygym.infra.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,21 +37,30 @@ public class HistoryService {
         }
     }
 
-    public List<HistoryResponse> getAll(User user){
+//    public List<HistoryResponse> getAll(User user){
+//
+//        List<History> histories = historyRepository.findAllByUser(user);
+//
+//        Map<Exercise, List<History>> groupedByExercise = histories.stream()
+//                .collect(Collectors.groupingBy(History::getExercise));
+//
+//        return groupedByExercise.entrySet().stream()
+//                .map(entry -> {
+//                    Exercise exercise = entry.getKey();
+//                    List<ExerciseHistoryResponse> exerciseHistory = entry.getValue().stream()
+//                            .map(ExerciseHistoryResponse::new)
+//                            .toList();
+//
+//                    return new HistoryResponse(exercise.getId(), exercise.getName(), exerciseHistory);
+//                }).toList();
+//    }
 
-        List<History> histories = historyRepository.findAllByUser(user);
+    public Page<ExerciseHistoryResponse> getAllByExerciseId(UUID exerciseId, Pageable pageable, User user) {
 
-        Map<Exercise, List<History>> groupedByExercise = histories.stream()
-                .collect(Collectors.groupingBy(History::getExercise));
+        var exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new NotFoundException("Esse exercício não existe"));
 
-        return groupedByExercise.entrySet().stream()
-                .map(entry -> {
-                    Exercise exercise = entry.getKey();
-                    List<ExerciseHistoryResponse> exerciseHistory = entry.getValue().stream()
-                            .map(ExerciseHistoryResponse::new)
-                            .toList();
-
-                    return new HistoryResponse(exercise.getId(), exercise.getName(), exerciseHistory);
-                }).toList();
+        return historyRepository.findAllByUserAndExercise(user, exercise, pageable )
+                .map(ExerciseHistoryResponse::new);
     }
 }
