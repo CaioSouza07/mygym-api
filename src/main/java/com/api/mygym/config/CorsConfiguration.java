@@ -1,26 +1,22 @@
 package com.api.mygym.config;
 
-import jakarta.servlet.http.Cookie;
-import java.time.Duration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-public class CookieUtils {
-    public static Cookie createRefreshToken(String refreshtoken){
-        Cookie cookie = new Cookie("refresh_token", refreshtoken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);                      // era false
-        cookie.setAttribute("SameSite", "None");      // linha nova
-        cookie.setPath("/");
-        cookie.setMaxAge((int) Duration.ofDays(30).getSeconds());
-        return cookie;
-    }
+@Configuration
+public class CorsConfiguration implements WebMvcConfigurer {
 
-    public static Cookie deleteRefreshToken() {
-        Cookie cookie = new Cookie("refresh_token", "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);                       // era false
-        cookie.setAttribute("SameSite", "None");       // linha nova
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        return cookie;
+    @Value("${api.security.cors.origins}")
+    private String originsCors;
+
+    // A aplicação frontend só poderá consumir minha api vindo dessa url e porta e utilizar esses métodos
+    @Override
+    public void addCorsMappings(CorsRegistry registry){
+        registry.addMapping("/**")
+                .allowedOrigins(originsCors.split(","))
+                .allowedMethods("*")
+                .allowCredentials(true);
     }
 }
